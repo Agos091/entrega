@@ -1,0 +1,112 @@
+# Leilão de Entregas - README
+
+## Introdução
+
+Este projeto tem como objetivo desenvolver um software que simula um leilão de entregas urbanas, otimizando as rotas e entregas com base em bônus oferecidos pelos clientes. O foco é maximizar o lucro da empresa através da seleção das melhores rotas de entrega.
+
+O projeto abrange conceitos de **Inteligência Artificial**, **Teoria dos Grafos**, e **Otimização**, e oferece duas soluções: uma com um algoritmo básico e outra utilizando um algoritmo de **Inteligência Artificial** para encontrar soluções mais eficientes.
+
+## Funcionalidades
+
+1. **Leitura da Matriz de Conexões**: O software processa uma matriz que representa os tempos de deslocamento entre destinos urbanos.
+2. **Leitura da Lista de Entregas**: O software processa uma lista de entregas, cada uma com um horário de saída e um bônus associado.
+3. **Cálculo de Lucro**: O software exibe a sequência de entregas programadas e o lucro esperado.
+4. **Comparação de Algoritmos**: A implementação de dois algoritmos distintos permite a comparação de desempenho:
+   - Algoritmo Básico: Simples, sem otimização.
+   - Algoritmo de IA: Utiliza técnicas de IA para otimizar o lucro.
+5. **Simulação Gráfica Interativa**: Uma simulação gráfica visualiza o processo de entrega, permitindo que o usuário interaja e modifique parâmetros.
+
+## Estrutura de Entrada
+
+### Matriz de Conexões
+
+Representa os tempos de deslocamento entre os destinos. Cada destino é representado por uma letra, e o tempo é dado em minutos.
+
+Exemplo:
+
+### Lista de Entregas
+
+Contém o tempo de início (em minutos), o destino, e o bônus oferecido para cada entrega.
+
+Exemplo:
+conexões A, B, C, D 0, 5, 0, 2 5, 0, 3, 0 0, 3, 0, 8 2, 0, 8, 0
+
+### Lista de Entregas
+
+Contém o tempo de início (em minutos), o destino, e o bônus oferecido para cada entrega.
+
+Exemplo:
+entregas agendadas 0, B, 1 5, C, 10 10, D, 8
+
+## Análise das Entregas
+
+### Exemplo de Decisão de Rotas
+
+#### Opção 1: Entregar em B primeiro
+
+- Saída de A em 0 minuto, chegada em B em 5 minutos.
+- Retorno a A em 10 minutos.
+- Próxima entrega: D. Chegada em D em 12 minutos, retorno em 14 minutos.
+- **Lucro total**: 1 (B) + 8 (D) = 9.
+
+#### Opção 2: Esperar pela entrega em C
+
+- Saída de A em 5 minutos, chegada em C em 13 minutos, retorno em 21 minutos.
+- **Lucro total**: 10 (C).
+
+## Tarefas do Projeto
+
+### 1. Versão 1 - Algoritmo Básico
+
+Desenvolver um algoritmo básico que:
+
+- Lê a matriz de conexões e a lista de entregas.
+- Calcula e exibe a sequência de entregas com base na ordem fornecida, sem otimização.
+
+### 2. Versão 2 - Algoritmo de IA
+
+Desenvolver um algoritmo que utiliza técnicas de **Inteligência Artificial** para otimizar a seleção das entregas e maximizar o lucro.
+
+### 3. Comparação de Desempenho
+
+Comparar as soluções dos dois algoritmos, gerando gráficos que mostrem:
+
+- O tempo de execução de cada algoritmo.
+- O lucro obtido em cada versão.
+
+### 4. Simulação Gráfica
+
+Implementar uma interface gráfica que:
+
+- Permite a visualização do processo de entrega.
+- Oferece interatividade ao usuário, que pode ajustar os parâmetros das entregas e conexões.
+
+## Requisitos
+
+- Python 3.12
+- Bibliotecas necessárias:
+  - `tkinter` (para a interface gráfica)
+  - `matplotlib` (para geração de gráficos)
+  - `numpy` (para manipulação de matrizes)
+
+## Como Executar
+
+1. Certifique-se de que todas as dependências estão instaladas:
+   pip install tkinter matplotlib numpy
+2. Execute o arquivo principal para iniciar a simulação:
+3. Execute o arquivo principal para iniciar a simulação:
+
+## Exemplo de Saída
+
+- **Algoritmo Básico**: `(Lucro total: 9)`
+- **Algoritmo de IA**: `(Lucro total: 10)`
+
+## Colaboradores
+
+Este trabalho foi desenvolvido em grupo, com no mínimo 3 e no máximo 5 integrantes, conforme solicitado. Exceções foram solicitadas antecipadamente.
+
+## Conclusão
+
+Este projeto aborda a otimização de rotas de entrega em um cenário urbano, proporcionando uma solução eficaz tanto com um algoritmo básico quanto com uma versão otimizada através de técnicas de Inteligência Artificial. A comparação de ambas as abordagens oferece uma visão clara sobre o impacto da otimização nas entregas diárias.
+
+DEVE SER BOTADO UM INPUT EM LETRA MAISCULA PARA FUNCIONAR
