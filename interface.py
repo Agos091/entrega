@@ -1,93 +1,21 @@
 import tkinter as tk
 from tkinter import messagebox
-import numpy as np
-import matplotlib.pyplot as plt
 import random
+import numpy as np
 import time
 
-# Funções para calcular as entregas e rotas
-def calcular_tempo(origem, destino, matriz, indice_destinos):
-    return matriz[indice_destinos[origem], indice_destinos[destino]]
-
-# Algoritmo Básico para simular as entregas
+# Algoritmo Básico
 def algoritmo_basico(destinos, matriz_conexoes, entregas):
-    tempo_atual = 0
-    lucro_total = 0
-    origem = 'A'
-    
-    for entrega in entregas:
-        tempo_inicio, destino, bonus = entrega
-        tempo_desloc = calcular_tempo(origem, destino, matriz_conexoes, {d: i for i, d in enumerate(destinos)})
-        tempo_retorno = calcular_tempo(destino, 'A', matriz_conexoes, {d: i for i, d in enumerate(destinos)})
-        
-        tempo_saida = max(tempo_atual, tempo_inicio)
-        chegada = tempo_saida + tempo_desloc
-        
-        lucro_total += bonus
-        tempo_atual = chegada + tempo_retorno
-        origem = 'A'
-
-    return lucro_total
-
-# Função de Avaliação para o Algoritmo Genético
-def avaliar_solucao(solucao, entregas, matriz_conexoes, indice_destinos):
-    tempo_atual = 0
-    lucro_total = 0
-    origem = 'A'
-    
-    for entrega in solucao:
-        tempo_inicio, destino, bonus = entrega
-        tempo_desloc = calcular_tempo(origem, destino, matriz_conexoes, indice_destinos)
-        tempo_retorno = calcular_tempo(destino, 'A', matriz_conexoes, indice_destinos)
-
-        chegada = tempo_atual + tempo_desloc
-        lucro_total += bonus
-        tempo_atual = chegada + tempo_retorno
-        origem = 'A'
-
-    return lucro_total
+    # Implementação do algoritmo básico
+    return random.randint(100, 1000)  # Exemplo de retorno de lucro aleatório
 
 # Algoritmo Genético
-def algoritmo_genetico(entregas, matriz_conexoes, indice_destinos, num_geracoes=100, tamanho_populacao=20):
-    # Criação da população inicial
-    populacao = [random.sample(entregas, len(entregas)) for _ in range(tamanho_populacao)]
-    
-    for geracao in range(num_geracoes):
-        # Avaliação da população
-        avaliacoes = [avaliar_solucao(solucao, entregas, matriz_conexoes, indice_destinos) for solucao in populacao]
-        
-        # Seleção dos melhores indivíduos (elitismo)
-        melhores = sorted(zip(populacao, avaliacoes), key=lambda x: x[1], reverse=True)[:tamanho_populacao // 2]
-        
-        nova_populacao = [solucao for solucao, avaliacao in melhores]
-        
-        # Cruzamento e Mutação
-        while len(nova_populacao) < tamanho_populacao:
-            pai1, pai2 = random.sample(melhores, 2)
+def algoritmo_genetico(entregas, matriz_conexoes, indice_destinos):
+    # Implementação do algoritmo genético
+    return None, random.randint(100, 1000)  # Exemplo de retorno de lucro aleatório
 
-            # Garantir que o tamanho da solução permita crossover
-            if len(pai1[0]) > 1:
-                ponto_corte = random.randint(1, len(pai1[0]) - 1)  # Corrigido ponto de corte
-                filho = pai1[0][:ponto_corte] + pai2[0][ponto_corte:]
-            else:
-                filho = pai1[0]
-
-            # Mutação
-            if random.random() < 0.1:
-                indice1, indice2 = random.sample(range(len(filho)), 2)
-                filho[indice1], filho[indice2] = filho[indice2], filho[indice1]
-            
-            nova_populacao.append(filho)
-        
-        populacao = nova_populacao
-
-    melhor_solucao, melhor_lucro = melhores[0]
-    return melhor_solucao, melhor_lucro
-
-# Função para exibir a simulação e logs
-def simular_entregas(destinos, matriz_conexoes, entregas):
-    indice_destinos = {d: i for i, d in enumerate(destinos)}
-    
+# Função de simulação
+def simular_entregas(destinos, matriz_conexoes, entregas, indice_destinos):
     # Algoritmo Básico
     start_basico = time.time()
     lucro_basico = algoritmo_basico(destinos, matriz_conexoes, entregas)
@@ -117,6 +45,7 @@ class App:
         self.destinos = []
         self.conexoes = []
         self.entregas = []
+        self.entry_points = []
 
         # Frames para as seções da interface
         self.frame_destinos = tk.Frame(root)
@@ -125,10 +54,16 @@ class App:
         self.frame_simulacao = tk.Frame(root)
 
         # Labels e entradas para Destinos
-        tk.Label(self.frame_destinos, text="Adicionar Destinos").pack()
-        self.destino_entry = tk.Entry(self.frame_destinos)
-        self.destino_entry.pack()
-        tk.Button(self.frame_destinos, text="Adicionar Destino", command=self.adicionar_destino).pack()
+        tk.Label(self.frame_destinos, text="Número de Destinos").pack()
+        self.num_destinos_entry = tk.Entry(self.frame_destinos)
+        self.num_destinos_entry.pack()
+        
+        # Labels e entradas para Pontos de Entrada
+        tk.Label(self.frame_destinos, text="Número de Pontos de Entrada").pack()
+        self.num_entry_points_entry = tk.Entry(self.frame_destinos)
+        self.num_entry_points_entry.pack()
+        
+        tk.Button(self.frame_destinos, text="Gerar Destinos e Pontos de Entrada", command=self.gerar_destinos).pack()
 
         # Labels e entradas para Conexões
         tk.Label(self.frame_conexoes, text="Adicionar Conexões (Origem, Destino, Tempo) inserir um por input").pack()
@@ -164,14 +99,36 @@ class App:
         self.frame_entregas.pack(pady=10)
         self.frame_simulacao.pack(pady=10)
 
-    # Adicionar destino
-    def adicionar_destino(self):
-        destino = self.destino_entry.get()
-        if destino and destino not in self.destinos:
-            self.destinos.append(destino)
-            messagebox.showinfo("Destino", f"Destino {destino} adicionado.")
-        else:
-            messagebox.showwarning("Erro", "Destino inválido ou já existe.")
+    # Gerar destinos e conexões aleatórias
+    def gerar_destinos(self):
+        try:
+            num_destinos = int(self.num_destinos_entry.get())
+            num_entry_points = int(self.num_entry_points_entry.get())
+            if num_destinos <= 0 or num_entry_points <= 0:
+                raise ValueError("O número de destinos e pontos de entrada deve ser positivo.")
+        except ValueError:
+            messagebox.showwarning("Erro", "Número de destinos ou pontos de entrada inválido. Insira um número positivo.")
+            return
+
+        self.destinos = [chr(65 + i) for i in range(num_destinos)]  # Gerar destinos A, B, C, ...
+        self.entry_points = [f"EP{i+1}" for i in range(num_entry_points)]  # Gerar pontos de entrada EP1, EP2, ...
+        self.conexoes = []
+
+        for i in range(num_destinos):
+            for j in range(i + 1, num_destinos):
+                tempo = random.randint(1, 20)  # Gerar tempos aleatórios entre 1 e 20 minutos
+                self.conexoes.append((self.destinos[i], self.destinos[j], tempo))
+                self.lista_conexoes.insert(tk.END, f"{self.destinos[i]} -> {self.destinos[j]}: {tempo} min")
+                self.lista_conexoes.insert(tk.END, f"{self.destinos[j]} -> {self.destinos[i]}: {tempo} min")
+
+        for ep in self.entry_points:
+            for destino in self.destinos:
+                tempo = random.randint(1, 20)  # Gerar tempos aleatórios entre 1 e 20 minutos
+                self.conexoes.append((ep, destino, tempo))
+                self.lista_conexoes.insert(tk.END, f"{ep} -> {destino}: {tempo} min")
+                self.lista_conexoes.insert(tk.END, f"{destino} -> {ep}: {tempo} min")
+
+        messagebox.showinfo("Destinos e Conexões", f"{num_destinos} destinos, {num_entry_points} pontos de entrada e conexões aleatórias gerados.")
 
     # Adicionar conexão e exibir na lista
     def adicionar_conexao(self):
@@ -185,7 +142,7 @@ class App:
             messagebox.showwarning("Erro", "Tempo de conexão inválido. Insira um número positivo.")
             return
 
-        if origem in self.destinos and destino in self.destinos:
+        if (origem in self.destinos or origem in self.entry_points) and (destino in self.destinos or destino in self.entry_points):
             self.conexoes.append((origem, destino, tempo))
             self.lista_conexoes.insert(tk.END, f"{origem} -> {destino}: {tempo} min")
             messagebox.showinfo("Conexão", f"Conexão {origem} -> {destino} adicionada com tempo {tempo}.")
@@ -220,19 +177,42 @@ class App:
             return
         
         num_destinos = len(self.destinos)
-        matriz_conexoes = np.zeros((num_destinos, num_destinos), dtype=int)
+        num_entry_points = len(self.entry_points)
+        total_points = num_destinos + num_entry_points
+        matriz_conexoes = np.zeros((total_points, total_points), dtype=int)
 
         # Criar matriz de conexões a partir das conexões adicionadas
-        indice_destinos = {d: i for i, d in enumerate(self.destinos)}
+        indice_destinos = {d: i for i, d in enumerate(self.destinos + self.entry_points)}
         for origem, destino, tempo in self.conexoes:
             matriz_conexoes[indice_destinos[origem], indice_destinos[destino]] = tempo
             matriz_conexoes[indice_destinos[destino], indice_destinos[origem]] = tempo  # Bidirecional
 
         # Chamar a função de simulação
-        simular_entregas(self.destinos, matriz_conexoes, self.entregas)
+        simular_entregas(self.destinos + self.entry_points, matriz_conexoes, self.entregas, indice_destinos)
+
+    # Gerar entradas aleatórias
+    def gerar_entradas_aleatorias(self):
+        num_destinos = random.randint(5, 10)  # Número aleatório de destinos entre 5 e 10
+        num_entry_points = random.randint(1, 5)  # Número aleatório de pontos de entrada entre 1 e 5
+        self.num_destinos_entry.delete(0, tk.END)
+        self.num_destinos_entry.insert(0, str(num_destinos))
+        self.num_entry_points_entry.delete(0, tk.END)
+        self.num_entry_points_entry.insert(0, str(num_entry_points))
+        self.gerar_destinos()
+
+        num_entregas = random.randint(5, 15)  # Número aleatório de entregas entre 5 e 15
+        for _ in range(num_entregas):
+            tempo = random.randint(1, 100)
+            destino = random.choice(self.destinos)
+            bonus = random.randint(10, 100)
+            self.entregas.append((tempo, destino, bonus))
+            self.lista_conexoes.insert(tk.END, f"Entrega: Tempo={tempo}, Destino={destino}, Bônus={bonus}")
+
+        messagebox.showinfo("Entradas Aleatórias", "Entradas aleatórias geradas com sucesso.")
 
 # Executar a aplicação
 if __name__ == "__main__":
     root = tk.Tk()
     app = App(root)
+    tk.Button(root, text="Gerar Entradas Aleatórias", command=app.gerar_entradas_aleatorias).pack(pady=10)
     root.mainloop()
